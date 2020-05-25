@@ -266,7 +266,7 @@ public class GUI { //contains all the classes necessary to build the GUI
         public Panel() throws IOException {
             board = builder.getBoardFromBooleanMatrix(bool_matrix);
 
-            BufferedImage all_img = ImageIO.read(new File("./all.gif")); //importing the "sprite"
+            BufferedImage all_img = ImageIO.read(getClass().getResourceAsStream("images/all.gif"));
             dictionary_of_images = new HashMap<>(); //creating the list of images with names
             cell_lookup_table = new HashMap<>(); //creating the list of cells with coordinates
             Click click = new Click(); //using our Click class to handle left/right clicks
