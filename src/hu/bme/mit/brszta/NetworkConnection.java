@@ -207,7 +207,7 @@ public class multiPlayer {
         public void sendBoard(boolean[][] mines){
             try {
 
-                SendBoard board = new SendBoard(mines);
+                BoardInitMatrix board = new BoardInitMatrix(mines);
 //                for (int i = 0; i < mines.length; i++) {
 //                    for (int j = 0; j < mines[i].length; j++) {
 //                        if (mines[i][j])
@@ -302,8 +302,8 @@ public class multiPlayer {
             boolean[][] board = new boolean[0][];
             try {
 
-                SendBoard inBoard = (SendBoard)objIn.readObject();
-                board = inBoard.getBoard();
+                BoardInitMatrix inBoard = (BoardInitMatrix)objIn.readObject();
+                board = inBoard.getMatrix();
 
                 for (int i = 0; i < board.length; i++) {
                     for (int j = 0; j < board[i].length; j++) {

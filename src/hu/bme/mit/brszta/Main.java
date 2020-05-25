@@ -28,7 +28,7 @@ public class Main implements Runnable {
             if(!gui.win_flag && !gui.lose_flag) {
                 gui.window_frame.repaint();
             } else {
-                gui.reset_game();
+                gui.handleGameOver();
             }
 
             try {
