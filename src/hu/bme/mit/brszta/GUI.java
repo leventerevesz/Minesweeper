@@ -12,7 +12,10 @@ import java.net.InetAddress;
 import java.util.*;
 import java.net.UnknownHostException;
 
-public class GUI { //contains all the classes necessary to build the GUI
+/**
+ * Class containing all the subclasses necessary to build the GUI
+ */
+public class GUI {
 
     public WindowFrame window_frame;
     private BoardPanel localBoardPanel;

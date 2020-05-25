@@ -6,6 +6,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class containing all network-related functionality.
+ */
 public class NetworkConnection {
 
     boolean isServer;
