@@ -32,4 +32,8 @@ public class EmptyCell extends Cell {
         }
         return neighbourMines;
     }
+    @Override
+    public boolean isMine() {
+        return false;
+    }
 }

@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class BoardBuilder {
 
+    private boolean[][] boolean_board;
     /**
      * Create a board with random mine placement.
      * @param sizeX Horizontal size of the board.
@@ -33,6 +34,10 @@ public class BoardBuilder {
         return new Board(cellMatrix);
     }
 
+    public boolean[][] getBooleanMatrix() {
+        return boolean_board;
+    }
+
     private boolean[][] createRandomBooleanMatrix(int sizeX, int sizeY, int trues){
         // 1D lists can be easily shuffled.
         List<Boolean> initList = new ArrayList<Boolean>();
@@ -51,6 +56,7 @@ public class BoardBuilder {
                 matrix[row][col] = initList.get(row * sizeX + col);
             }
         }
+        boolean_board = matrix;
         return matrix;
     }
 

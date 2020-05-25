@@ -17,6 +17,7 @@ public class Board {
 
     private void initNeighbourCells() {
         // Connect the adjacent cells to each cell in the cellMatrix.
+
         int sizeX = getSizeX();
         int sizeY = getSizeY();
         for (int row = 0; row < sizeY; row++) {
@@ -108,5 +109,17 @@ public class Board {
      */
     public Cell getCell(int row, int col) {
         return cellMatrix[row][col];
+    }
+
+    //count the number of mines revealed to check in GUI the win condition
+
+    public int countRevealedMines() {
+        int count = 0;
+        for (Cell[] cellRow : cellMatrix) {
+            for (Cell cell : cellRow) {
+                if ((cell.cellState == CellState.FLAGGED) && cell.isMine()) count++;
+            }
+        }
+        return count;
     }
 }
