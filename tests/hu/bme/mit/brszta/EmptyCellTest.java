@@ -2,6 +2,7 @@ package hu.bme.mit.brszta;
 
 import org.junit.jupiter.api.Test;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EmptyCellTest {
