@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class multiPlayer {
+public class NetworkConnection {
 
     boolean isServer;
     private ServerSocket serverSocket;
@@ -17,7 +17,7 @@ public class multiPlayer {
     public List<ReceiveListener> listeners;
     private boolean clientconnecting=true;
 
-    public multiPlayer(boolean isServer){
+    public NetworkConnection(boolean isServer){
         this.isServer =isServer;
         this.listeners = new ArrayList<>();
 

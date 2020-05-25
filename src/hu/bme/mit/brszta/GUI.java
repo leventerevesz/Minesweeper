@@ -40,8 +40,6 @@ public class GUI { //contains all the classes necessary to build the GUI
     }
 
 
-
-
     /**
      * The main window of the application.
      */
@@ -534,7 +532,7 @@ public class GUI { //contains all the classes necessary to build the GUI
                         established_connection = true;
                         OpponentClick oclick = new OpponentClick();
                         networkConnection.addReceiveListener(oclick);
-                        bool_matrix = networkConnection.getBoardInitMatrix();
+                        bool_matrix = networkConnection.getBoard();
                         networkConnection.requestingData();
                     }
 
@@ -561,7 +559,7 @@ public class GUI { //contains all the classes necessary to build the GUI
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    networkConnection.interruptConnection();
+                    networkConnection.interuptConnection();
                     mySwingWorker.cancel(true);
                     super.windowClosing(e);
                     connected=false;
@@ -576,7 +574,7 @@ public class GUI { //contains all the classes necessary to build the GUI
             cancelBtn.setBounds(110,70,80,30);
             cancelBtn.addActionListener(e -> {
                 dialog.dispose();
-                networkConnection.interruptConnection();
+                networkConnection.interuptConnection();
                 mySwingWorker.cancel(true);
                 connected=false;
             });
@@ -635,7 +633,7 @@ public class GUI { //contains all the classes necessary to build the GUI
                     //reveal cell on left click and check if it's a mine or not
                     if (SwingUtilities.isLeftMouseButton(e)) {
                         if(modes.getSelection().getActionCommand().equals("multi")) {
-                            networkConnection.sendClick(true, cell_x, cell_y);
+                            networkConnection.writeMyCells(true, cell_x, cell_y);
                         }
                         clicked_cell.reveal();
                         if(clicked_cell.displayNumber == -1) { //you lost
@@ -645,7 +643,7 @@ public class GUI { //contains all the classes necessary to build the GUI
                     //flag cell on right click and check if it was the last missing mine
                     if (SwingUtilities.isRightMouseButton(e)){
                         if(modes.getSelection().getActionCommand().equals("multi")) {
-                            networkConnection.sendClick(false, cell_x, cell_y);
+                            networkConnection.writeMyCells(false, cell_x, cell_y);
                         }
                         clicked_cell.flag();
 
