@@ -1,5 +1,6 @@
 package hu.bme.mit.brszta;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -72,7 +73,7 @@ public class NetworkConnection {
             try {
                 serverSocket.close();
             }catch (IOException ex){
-                System.out.println("Server connecton close ex");
+                System.out.println("Server connection close ex");
             }
         }
         else{
@@ -99,48 +100,57 @@ public class NetworkConnection {
 
     /**
      * Set up connection from the server side, and immediately send the board initializer matrix.
-     * @param booleanMatrix: board initializer matrix
+     * @param booleanMatrix : board initializer matrix
      * @see BoardInitMatrix
      * @see BoardBuilder
+     * @return
      */
-    public void acceptConnection(boolean[][] booleanMatrix) {
+    public boolean acceptConnection(boolean[][] booleanMatrix) {
+        boolean connected=false;
         try {
             System.out.println("Waiting for connections....");
             while (numplayers < 2) {
-                System.out.println("accept");
                 Socket socket = serverSocket.accept();
                 numplayers++;
                 System.out.println("Player" + numplayers + ". has connected");
                 player1 = new HostSideConnection(socket, booleanMatrix);
                 Thread t = new Thread(player1);
                 t.start();
+                connected=true;
             }
-            System.out.println("Max num of players. No longer accepting connections.");
+            System.out.println("Maximum number of players. No longer accepting connections.");
 
         } catch (Exception ex) {
-            System.out.println("Exception from acceptConnecton()");
+            connected=false;
+            System.out.println("Exception from acceptConnection()");
         }
+        return connected;
     }
 
     /**
      * Attempt connecting to the given host.
      * @param hostAddress
      * @param port
+     * @return
      */
-    public void requestConnection(String hostAddress,int port){
+    public boolean requestConnection(String hostAddress, int port){
+        boolean connected=false;
         System.out.println("----Client-----");
         while (clientconnecting){
             try {
                 socket = new Socket(hostAddress, port);
                 player2 = new GuestSideConnection(socket);
+                connected=true;
                 break;
             }
             catch (IOException ex)
             {
+                connected=false;
                 System.out.println("Exception from client side connection constructor");
             }
         }
         clientconnecting=true;
+        return connected;
     }
 
 
@@ -192,6 +202,7 @@ public class NetworkConnection {
             }
             catch (IOException ex)
             {
+                JOptionPane.showMessageDialog(null,"A kapcsolat megszakadt próbáld újra","Hiba",JOptionPane.ERROR_MESSAGE);
                 System.out.println("Exception from run() ");
             }
         }
@@ -268,7 +279,6 @@ public class NetworkConnection {
                             for (ReceiveListener listener : listeners)
                                 listener.ReceiveData(leftOrRight, oppX, oppY);
                         }
-                        received =false;
                     }
                 }
             }
@@ -294,6 +304,7 @@ public class NetworkConnection {
             }
             catch (IOException ex)
             {
+                JOptionPane.showMessageDialog(null,"A kapcsolat megszakadt próbáld újra","Hiba",JOptionPane.ERROR_MESSAGE);
                 System.out.println("Exception from client side write data");
             }
         }
@@ -303,17 +314,9 @@ public class NetworkConnection {
             try {
                 BoardInitMatrix inBoard = (BoardInitMatrix)objIn.readObject();
                 board = inBoard.getMatrix();
-
-                for (int i = 0; i < board.length; i++) {
-                    for (int j = 0; j < board[i].length; j++) {
-                        if (board[i][j])
-                            System.out.print("1");
-                        else
-                            System.out.print("0");
-                    }
-                    System.out.println();
-                }
+                System.out.print("Received the BoardInitMatrix.\n\n");
             } catch (IOException | ClassNotFoundException e) {
+                JOptionPane.showMessageDialog(null,"Az adatok fogadása nem lehetséges, próbáld újra.","Hiba",JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
             return board;

@@ -8,6 +8,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.*;
 import java.net.UnknownHostException;
@@ -31,7 +32,6 @@ public class GUI {
     private Date start_clock;
     public boolean win_flag, lose_flag, opponent_flag, established_connection;
 
-    boolean connected;
 
     public GUI() {
         window_frame = new WindowFrame(); //creating the Jframe containing all GUI elements
@@ -432,7 +432,7 @@ public class GUI {
                     IP_address.setEditable(false);
 
                     try {
-                        IP_address.setText(InetAddress.getLocalHost().getHostAddress());
+                        IP_address.setText(Inet4Address.getLocalHost().getHostAddress());
                     } catch (UnknownHostException ex) {
                         ex.printStackTrace();
                     }
@@ -476,12 +476,12 @@ public class GUI {
             bool_matrix = builder.getBooleanMatrix();
 
             if(modes.getSelection().getActionCommand().equals("multi")){
-                boolean connected= initMultiplayer(bool_matrix);
-                if (connected){
+                initMultiplayer(bool_matrix);
+                if (established_connection){
                     try {
                         window_frame.setMulti();
-                    } catch (IOException ex) {
-                        // continue
+                    } catch (Exception ex) {
+                        resetGuiState();
                     }
                 }
             }
@@ -511,28 +511,27 @@ public class GUI {
          * @see BoardBuilder
          * @return true if connection is established successfully.
          */
-        private boolean initMultiplayer(boolean[][] mines) {
+        private void initMultiplayer(boolean[][] mines) {
             SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>(){
 
                 @Override
                 protected Void doInBackground() throws Exception {
+                    established_connection = false;
                     if (connection.getSelection().getActionCommand().equals("host")) {
                         window_frame.setTitle("Host Minesweeper");
                         networkConnection = new NetworkConnection(true);
-                        networkConnection.acceptConnection(mines);
+                        established_connection = networkConnection.acceptConnection(mines);
 
                         start_clock = new Date(); //starting the game clock
-                        established_connection = true;
                         OpponentClick oclick = new OpponentClick();
                         networkConnection.addReceiveListener(oclick);
                     }
                     else if(connection.getSelection().getActionCommand().equals("guest")) {
                         window_frame.setTitle("Guest Minesweeper");
                         networkConnection = new NetworkConnection(false);
-                        networkConnection.requestConnection(IP_address.getText(),51734);
+                        established_connection = networkConnection.requestConnection(IP_address.getText(),51734);
 
                         start_clock = new Date(); //starting the game clock
-                        established_connection = true;
                         OpponentClick oclick = new OpponentClick();
                         networkConnection.addReceiveListener(oclick);
                         bool_matrix = networkConnection.getBoardInitMatrix();
@@ -546,14 +545,10 @@ public class GUI {
             Window win = SwingUtilities.getWindowAncestor(IP_address);
             final JDialog dialog = new JDialog(win, "Kapcsolódás", Dialog.ModalityType.APPLICATION_MODAL);
 
-            mySwingWorker.addPropertyChangeListener(new PropertyChangeListener() {
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    if (evt.getPropertyName().equals("state")) {
-                        if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
-                            dialog.dispose();
-                            connected=true;
-                        }
+            mySwingWorker.addPropertyChangeListener(evt -> {
+                if (evt.getPropertyName().equals("state")) {
+                    if (evt.getNewValue() == SwingWorker.StateValue.DONE) {
+                        dialog.dispose();
                     }
                 }
             });
@@ -565,7 +560,6 @@ public class GUI {
                     networkConnection.interruptConnection();
                     mySwingWorker.cancel(true);
                     super.windowClosing(e);
-                    connected=false;
                 }
             });
 
@@ -579,7 +573,6 @@ public class GUI {
                 dialog.dispose();
                 networkConnection.interruptConnection();
                 mySwingWorker.cancel(true);
-                connected=false;
             });
             waitMessagePanel.add(cancelBtn);
 
@@ -597,7 +590,6 @@ public class GUI {
             dialog.setResizable(false);
             dialog.setVisible(true);
 
-            return connected;
         }
     }
 
