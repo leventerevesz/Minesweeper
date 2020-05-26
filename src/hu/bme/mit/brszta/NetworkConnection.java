@@ -146,7 +146,7 @@ public class NetworkConnection {
             catch (IOException ex)
             {
                 connected=false;
-                System.out.println("Exception from client side connection constructor");
+                //System.out.println("Exception from client side connection constructor");
             }
         }
         clientconnecting=true;

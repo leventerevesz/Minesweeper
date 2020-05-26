@@ -789,5 +789,14 @@ public class GUI {
         win_flag = false;
         established_connection = false;
         builder = new BoardBuilder();
+        if (networkConnection!=null) {
+            try {
+                networkConnection.interruptConnection();
+                networkConnection = null;
+            }
+            catch(Exception ex)
+            {
+            }
+        }
     }
 }
